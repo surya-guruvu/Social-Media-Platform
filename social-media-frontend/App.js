@@ -1,33 +1,32 @@
-import { StatusBar } from 'expo-status-bar';
-
 import React from 'react';
-import {View, Text, Image, ScrollView, TextInput} from 'react-native';
+import { StatusBar, View, Text, StyleSheet,ScrollView} from 'react-native';
+import AppNavigator from './Navigation/AppNavigator';
 
 const App = () => {
-  return (
-    <ScrollView>
-      <Text>Some text</Text>
-      <View>
-        <Text>Some more text</Text>
+   return (
+      <>
+        <AppNavigator/>
+         <StatusBar barStyle="dark-content" hidden={false} backgroundColor="#000" translucent={true}/>
+         {/* <ScrollView style={styles.container}>
+            <View>
+              <Text>Welcome to My SM Platform</Text>
+            </View>
+         </ScrollView> */}
+      </>
+   );
+}
 
-        <Image
-          source={{
-            uri: 'https://reactnative.dev/docs/assets/p_cat2.png',
-          }}
-          style={{width: 200, height: 200}}
-        />
-      </View>
-      <TextInput
-        style={{
-          height: 40,
-          borderColor: 'gray',
-          borderWidth: 1,
-        }}
-        defaultValue="You can type in me"
-      />
-    </ScrollView>
-  );
-};
+const styles = StyleSheet.create({
+   container: {
+      flex: 1,
+      backgroundColor: '#fff',
+      paddingTop: StatusBar.currentHeight || 0, // Ensure the text is below the status bar
+   },
+   text: {
+      fontSize: 20,
+      color: '#000',
+   },
+});
 
 export default App;
 
