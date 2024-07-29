@@ -1,0 +1,41 @@
+package com.smplatform.backend.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
+
+/**
+ * SecurityConfig
+ */
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authorizeRequests -> 
+                authorizeRequests
+                    .requestMatchers("/loginPage","/resources/*","login","register","/api/register").permitAll()
+                    .anyRequest().authenticated()
+            )
+            .formLogin(formLogin -> 
+                formLogin
+                    .loginPage("/login")
+                    .defaultSuccessUrl("/")
+                    .permitAll() // Ensure the custom login page is accessible to everyone
+            )
+            .logout(logout -> 
+                logout
+                    .permitAll() // Ensure the logout is accessible to everyone
+            );
+
+        return http.build();
+    }
+
+
+}
