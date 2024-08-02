@@ -20,18 +20,8 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorizeRequests -> 
                 authorizeRequests
-                    .requestMatchers("/loginPage","/resources/*","login","register","/api/register").permitAll()
+                    .requestMatchers("/","/loginUrl","/resources/*","login","register","/api/register").permitAll()
                     .anyRequest().authenticated()
-            )
-            .formLogin(formLogin -> 
-                formLogin
-                    .loginPage("/login")
-                    .defaultSuccessUrl("/")
-                    .permitAll() // Ensure the custom login page is accessible to everyone
-            )
-            .logout(logout -> 
-                logout
-                    .permitAll() // Ensure the logout is accessible to everyone
             );
 
         return http.build();
