@@ -33,7 +33,7 @@ public class authController {
 
     @PostMapping("login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception{
-        
+
         
         String username = authenticationRequest.getUsername();
         String password = authenticationRequest.getPassword();

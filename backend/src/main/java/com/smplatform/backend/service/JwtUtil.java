@@ -22,24 +22,24 @@ public class JwtUtil {
     // private static String secret;
     private static String secret = "1234-5678-9876-5432-1012";
 
-    private Claims extractAllClaims(String token) {
+    private static Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
-    public <T> T extractClaim(String token, Function<Claims,T> claimsResolver){
+    public static <T> T extractClaim(String token, Function<Claims,T> claimsResolver){
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    public String extractUsername(String token){
+    public static String extractUsername(String token){
         return extractClaim(token, Claims::getSubject);
     }
 
-    public Date extractExpiration(String token){
+    public static Date extractExpiration(String token){
         return extractClaim(token, Claims::getExpiration);
     }
 
-    private Boolean isTokenExpired(String token){
+    private static Boolean isTokenExpired(String token){
         return extractExpiration(token).before(new Date());
     }
 
@@ -56,7 +56,7 @@ public class JwtUtil {
         return createToken(claims, userDetails.getUsername());
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public static Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
