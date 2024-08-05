@@ -3,12 +3,16 @@ import { View, Text, StyleSheet, Button } from 'react-native';
 
 const HomeScreen = ({ navigation }) => (
   <View style={styles.container}>
-    <Text style={styles.title}>Welcome to My SM Platform</Text>
-    <Button
-      title="Go to Login"
-      onPress={() => navigation.navigate('Login')}
+    <Text style={styles.title}>Welcome to my SM Platform</Text>
+    <Button title='Login'
+      onPress={()=>navigation.navigate('Login')}
+    />
+    <Text>p</Text>
+    <Button title='Register'
+      onPress={()=>navigation.navigate('Register')}
     />
   </View>
+
 );
 
 const styles = StyleSheet.create({

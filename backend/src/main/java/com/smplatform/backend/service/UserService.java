@@ -1,5 +1,6 @@
 package com.smplatform.backend.service;
 
+import com.smplatform.backend.component.DuplicateUsernameException;
 import com.smplatform.backend.model.User;
 import com.smplatform.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,14 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    public User save(User user) {
+    public User save(User user) throws DuplicateUsernameException{
+        String username = user.getUsername();
+        User user_repo = userRepository.findByUsername(username);
+
+        if(user_repo !=null){
+            throw new DuplicateUsernameException("This username already exists");
+        }
+        
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
