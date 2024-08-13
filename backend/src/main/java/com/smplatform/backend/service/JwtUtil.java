@@ -31,7 +31,7 @@ public class JwtUtil {
         return claimsResolver.apply(claims);
     }
 
-    public static String extractUsername(String token){
+    public static String extractIdentifier(String token){
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -51,13 +51,13 @@ public class JwtUtil {
                 .compact();
     }
 
-    public static String generateToken(UserDetails userDetails){
+    public static String generateToken(String identifier){
         Map<String,Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+        return createToken(claims, identifier);
     }
 
     public static Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
+        final String username = extractIdentifier(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 

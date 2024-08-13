@@ -18,10 +18,26 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    @Column(nullable = false,unique = true,length = 50)
+    @Column(nullable = true, unique = true) // Username is optional and unique for username/password auth
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = true) // Nullable for OAuth2 users
     private String password;
+
+    @Column(nullable = true, unique = true) // Email is used as the unique identifier for OAuth2
+    private String email;
+
+    private String name; // Optional, could be populated from OAuth2 or other sources
+
+    // Default constructor
+    public User() {
+    }
+
+    public User(String username, String password, String email, String name) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.name = name;
+    }
 
 }

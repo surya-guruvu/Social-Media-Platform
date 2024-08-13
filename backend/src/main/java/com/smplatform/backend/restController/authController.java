@@ -50,7 +50,7 @@ public class authController {
 
         final UserDetails userDetails = userService.loadUserByUsername(username);
 
-        final String jwt = JwtUtil.generateToken(userDetails);
+        final String jwt = JwtUtil.generateToken(userDetails.getUsername());
 
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
 

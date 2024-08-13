@@ -9,9 +9,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.smplatform.backend.component.CustomSuccessHandler;
 import com.smplatform.backend.component.JwtAuthenticationEntryPoint;
 import com.smplatform.backend.component.JwtRequestFilter;
-
 
 /**
  * SecurityConfig
@@ -26,6 +26,9 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
+    @Autowired
+    private CustomSuccessHandler customSuccessHandler;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -35,6 +38,11 @@ public class SecurityConfig {
                     .requestMatchers("/login","/register").permitAll()
                     .anyRequest().authenticated()
             )
+            
+            .oauth2Login((oauth2Login)->
+                oauth2Login.successHandler(customSuccessHandler)
+            )
+
             .exceptionHandling((exception)->exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
             .sessionManagement((session)-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
