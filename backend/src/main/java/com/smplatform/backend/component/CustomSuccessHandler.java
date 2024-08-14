@@ -6,7 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.codec.Utf8;
+// import org.springframework.security.crypto.codec.Utf8;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -20,11 +20,11 @@ import com.smplatform.backend.service.JwtUtil;
 import com.smplatform.backend.service.UserService;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
+// import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLEncoder;
+// import java.net.URLEncoder;
 import java.util.Base64;
 
 @Component
