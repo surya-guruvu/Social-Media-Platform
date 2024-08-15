@@ -51,6 +51,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             System.out.println(oauthToken);
 
             // Retrieve the OAuth2AuthorizedClient
+            // Loads Authorized Client object associated with current session, and gets AccessToken from that.
             OAuth2AuthorizedClient authorizedClient = this.authorizedClientService.loadAuthorizedClient(
                 oauthToken.getAuthorizedClientRegistrationId(), oauthToken.getName());
 
@@ -87,9 +88,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             // response.addCookie(cookie);
             // Redirect to frontend
 
-            System.out.println(jwt);
             String encodedToken =  Base64.getEncoder().encodeToString(jwt.getBytes());
-            System.out.println(encodedToken);
 
             String targetUrl = "http://localhost:3000/login/oauth2/redirect#token=" + encodedToken;
 
@@ -118,13 +117,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         if(userInfo != null){
             String email = userInfo.get("email").asText();
             String name  = userInfo.get("name").asText();
-            String Id = userInfo.get("sub").asText();
-
-            System.out.println(email);
-            System.out.println(name);
-            System.out.println(Id);
-
-            System.out.println(userInfo);
 
             return new User(null,null,email,name);
         }

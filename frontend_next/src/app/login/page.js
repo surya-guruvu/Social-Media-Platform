@@ -2,10 +2,10 @@
 
 import axios from 'axios';
 import { useState } from 'react';
-import styles from './Login.module.css'; // Import your CSS module or global styles
+import styles from '@/app/styles/Login.module.css'
 import Notification from '@/app/components/NotificationComponent';
+import GoogleSignInButton from '../components/GoogleSignInButton';
 import Link from 'next/link';
-import GoogleSignInButton from './GoogleSignInButton';
 
 
 const Login = () => {
@@ -80,6 +80,8 @@ const Login = () => {
       )}
 
       <GoogleSignInButton/>
+
+      <Link href="/register">Register</Link>
 
 
     </div>
