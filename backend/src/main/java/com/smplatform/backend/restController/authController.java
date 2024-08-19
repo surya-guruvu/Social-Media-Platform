@@ -38,15 +38,12 @@ public class authController {
         String username = authenticationRequest.getUsername();
         String password = authenticationRequest.getPassword();
 
-
         try {
             authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         }
         catch (BadCredentialsException e){
             throw new Exception("Incorrect Username or Password:",e);
         }
-
-        System.out.println("Authenication Successful");
 
         final UserDetails userDetails = userService.loadUserByUsername(username);
 

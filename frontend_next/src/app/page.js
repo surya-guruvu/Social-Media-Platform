@@ -1,7 +1,7 @@
 'use client'
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
+import SendVerificationEmailPage from "./components/SendVerificationEmailPage";
 
 export default function HomePage() {
   
@@ -26,9 +26,19 @@ export default function HomePage() {
     <p>Welcome to SM platform</p>
 
     {authenticated ? <>You are successfully authenticated</> :<Link href='/login'>Login</Link>}
+
+    <br/><br/>
     
     
     {!authenticated ? <></> :<button onClick={handleSignOut}>Sign out</button>}
+
+    <br/><br/>
+
+    {/* <SendVerificationEmailPage/> */}
+
+    {authenticated ? <Link href='/updateEmail'>Add/Update Email</Link>: <></>}
+
+    {authenticated ? <SendVerificationEmailPage/>:<></>}
 
     </>
   );

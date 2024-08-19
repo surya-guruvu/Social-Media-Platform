@@ -48,7 +48,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         if (authentication instanceof OAuth2AuthenticationToken) {
             OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
 
-            System.out.println(oauthToken);
+            // System.out.println(oauthToken);
 
             // Retrieve the OAuth2AuthorizedClient
             // Loads Authorized Client object associated with current session, and gets AccessToken from that.
@@ -62,11 +62,12 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             request.getSession().setAttribute("accessToken", accessToken);
 
             User user = fetchUserDetailsFromProvider(accessToken);
+            user.setEmailVerified(true);
 
             String jwt = "";
 
             if(user !=null){
-                User existingUser = userService.findByUsername(user.getUsername());
+                User existingUser = userService.findByEmail(user.getEmail());
 
                 if(existingUser == null){
                     userService.save(user);
@@ -74,6 +75,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 else{
                     existingUser.setEmail(user.getEmail());
                     existingUser.setName(user.getName());
+                    existingUser.setEmailVerified(true);
                     userService.save(existingUser);
                 }
             }

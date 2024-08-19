@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import com.smplatform.backend.service.JwtUtil;
 
 import jakarta.servlet.FilterChain;
@@ -26,9 +25,11 @@ public class JwtRequestFilter extends OncePerRequestFilter{
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response,@NonNull FilterChain filterChain)
-            throws ServletException, IOException {
+            throws ServletException, IOException{
         
         final String authHeader = request.getHeader("Authorization");
+
+        // System.out.println(authHeader);
 
         String identifier = "";
         String jwt = ""; 

@@ -7,10 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -27,12 +27,7 @@ public class ApplicationConfig {
 
     @Bean
     public AuthenticationManager authManager() {
-
-        var authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userService);
-        authProvider.setPasswordEncoder(passwordEncoder);
-        return new ProviderManager(authProvider);
+        return new ProviderManager(Collections.singletonList(new CustomAuthenticationProvider(userService,passwordEncoder)));
     }
-
 
 }
