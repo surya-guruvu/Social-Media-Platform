@@ -1,82 +1,79 @@
-"use client"
+'use client'
 import { useState } from 'react';
-import styles from '@/app/styles/Register.module.css';
+import { Container, Typography, TextField, Button, CircularProgress, Alert } from '@mui/material';
 import axios from 'axios';
-import Notification from '@/app/components/NotificationComponent';
 
-const Register = ()=>{
+const Register = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
-    const [username,setUsername] = useState('');
-    const [password,setPassword] = useState('');
-    const [loading,setLoading]   = useState(false);
-    const [error,setError]       = useState('');
-    const [success,setSuccess] = useState(false);
-    const [showNotification, setShowNotification] = useState(false);
-
-    const handleSubmit = (e)=>{
-        e.preventDefault();
-        setLoading(true);
-        setError('');
-        setShowNotification(false);
-
-        axios.post("http://localhost:8080/register",
-            {
-                'username':username,
-                'password':password
-            },
-            { headers: { 'Content-Type': 'application/json' } }
-        )
-        .then((response)=>{
-            setSuccess(true);
-        })
-        .catch((error)=>{
-            console.log(error.message);
-            setShowNotification(true);
-            setError(error.message);
-        });
-
-        setLoading(false);
-
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    
+    try {
+      const response = await axios.post(
+        'http://localhost:8080/register',
+        { username, password },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      setSuccess(true);
+    } catch (error) {
+      console.log(error.message);
+      setError('Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
+  };
 
-    return (
-        <div className={styles.container}>
-            <h1 className={styles.title}>Register</h1>
-            
-            <form className={styles.form} onSubmit={handleSubmit}>
-                <input 
-                    type='text'
-                    placeholder='Username'
-                    value={username}
-                    onChange={(e)=>setUsername(e.target.value)}
-                    className={styles.input}
-                    required
-                />
-
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className={styles.input}
-                    required
-                />
-
-                <button type="submit" className={styles.button} disabled={loading}>
-                    {loading ? 'Registering...' : 'Register'}
-                </button>
-
-            </form>
-
-            {success && <p>Registration success</p>}
+  return (
+    <Container maxWidth="xs">
+      <Typography variant="h4" component="h1" align="center" gutterBottom>
+        Register
+      </Typography>
       
-            {showNotification && (
-                <Notification message={error} onClose={() => setShowNotification(false)} />
-            )}
-        
-        </div>
-    )
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <TextField
+          label="Username"
+          variant="outlined"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          fullWidth
+        />
+        <TextField
+          label="Password"
+          type="password"
+          variant="outlined"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          fullWidth
+        />
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={loading}
+          fullWidth
+        >
+          {loading ? <CircularProgress size={24} /> : 'Register'}
+        </Button>
+      </form>
+
+      {success && <Typography variant="body1" color="success.main" align="center" mt={2}>Registration successful</Typography>}
+      
+      {error && (
+        <Alert severity="error" onClose={() => setError('')} sx={{ mt: 2 }}>
+          {error}
+        </Alert>
+      )}
+    </Container>
+  );
 }
 
 export default Register;

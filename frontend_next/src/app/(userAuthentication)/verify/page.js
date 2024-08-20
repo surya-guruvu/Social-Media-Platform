@@ -1,46 +1,47 @@
-"use client"
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Typography, CircularProgress, Container, Alert } from '@mui/material';
 
+const VerifyPage = () => {
+  const [message, setMessage] = useState('');
+  const [err, setErr] = useState('');
+  const [loading, setLoading] = useState(true);
 
-const VerifyPage = ()=>{
-    const [message,setMessage] = useState('');
-    const [err,setErr] = useState('');
+  useEffect(() => {
+    const query = window.location.search;
+    const params = new URLSearchParams(query);
+    const token = params.get('token');
 
+    if (token) {
+      axios.get(`http://localhost:8080/verifyEmail?token=${token}`)
+        .then((response) => {
+          setMessage(response.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setErr(error.response?.data || error.message);
+          setLoading(false);
+        });
+    } else {
+      setErr('No verification token provided.');
+      setLoading(false);
+    }
+  }, []);
 
-
-    // const router = useRouter();
-    // const {token} = router.query;
-
-    useEffect(() => {
-
-        const query = window.location.search;
-        const params = new URLSearchParams(query);
-        const token = params.get('token');
-
-        if(token){
-            axios.get(`http://localhost:8080/verifyEmail?token=${token}`)
-            .then((response)=>{
-                setMessage(response.data);
-            })
-            .catch((err)=>{
-                setErr(err);
-            });
-        }
-    },[]);
-
-    return (
+  return (
+    <Container maxWidth="sm">
+      {loading ? (
+        <CircularProgress />
+      ) : (
         <>
-            {message && <h1>{message}</h1>}
-            {err && <h1>{err}</h1>}
+          {message && <Typography variant="h4" color="success.main">{message}</Typography>}
+          {err && <Alert severity="error">{err}</Alert>}
         </>
-    );
+      )}
+    </Container>
+  );
+};
 
-
-}
-
-export default VerifyPage
-
-
+export default VerifyPage;

@@ -1,31 +1,33 @@
 'use client';
 
 import axios from 'axios';
-import { useState,useEffect } from 'react';
-import styles from '@/app/styles/Login.module.css'
-import Notification from '@/app/components/NotificationComponent';
+import { useState, useEffect } from 'react';
+import { Button, TextField, Container, Typography, CircularProgress, Alert, Box } from '@mui/material';
 import GoogleSignInButton from '../../components/GoogleSignInButton';
 import Link from 'next/link';
-
+import { useRouter } from 'next/navigation';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
-  const [success,setSuccess] = useState(false);
-  const [authenticated,setAuthenticated] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
+  const router = useRouter();
+  
 
-  const handleSignOut = ()=>{
+  const handleSignOut = () => {
     localStorage.removeItem('jwtToken');
+    setSuccess(false);
     setAuthenticated(false);
-  }
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevents the default form submission (like following the URL)
+    e.preventDefault();
 
     setLoading(true);
+    setSuccess(false);
     setError('');
 
     try {
@@ -34,83 +36,90 @@ const Login = () => {
         { username, password },
         { headers: { 'Content-Type': 'application/json' } }
       );
-      console.log(response.data.jwt);
       const jwtToken = response.data.jwt;
-
-      localStorage.setItem('jwtToken',jwtToken);
+      localStorage.setItem('jwtToken', jwtToken);
 
       setSuccess(true);
-
       setAuthenticated(true);
+      router.push('/');
 
-    } 
-    catch (error) {
-        console.log(error.message);
-        setShowNotification(true);
-        setError('Login failed. Please try again.');
-    } 
-    finally {
+    } catch (error) {
+      console.log(error.message);
+      setError('Login failed. Please try again.');
+    } finally {
       setLoading(false);
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     const jwtToken = localStorage.getItem('jwtToken');
-
-    if(jwtToken != null){
+    if (jwtToken != null) {
       setAuthenticated(true);
     }
-  },[]);
-
+  }, []);
 
   return (
-    <>
-      {!authenticated?
-      <div className={styles.container}>
-        <h1 className={styles.title}>Login</h1>
+    <Container maxWidth="sm">
+      {!authenticated ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Login
+          </Typography>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className={styles.input}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={styles.input}
-            required
-          />
-          <button type="submit" className={styles.button} disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
+          <form onSubmit={handleSubmit} style={{ width: '100%', marginTop: '1rem' }}>
+            <TextField
+              label="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              required
+            />
+            <TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              required
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={loading}
+              sx={{ mt: 2 }}
+            >
+              {loading ? <CircularProgress size={24} /> : 'Login'}
+            </Button>
+          </form>
 
-        </form>
+          {success && <Alert severity="success" sx={{ mt: 2 }}>Login success</Alert>}
+          {error && <Alert severity="error" onClose={() => setError('')} sx={{ mt: 2 }}>{error}</Alert>}
 
-        {success && <p>Login success</p>}
-        
-        {showNotification && (
-          <Notification message={error} onClose={() => setShowNotification(false)} />
-        )}
+          <Box sx={{ mt: 2 }}>
+            <GoogleSignInButton />
+          </Box>
 
-        <GoogleSignInButton/>
-
-        <Link href="/register">Register</Link>
-
-
-      </div>
-      :
-        <div className={styles.container}>
-          <h1 className={styles.title}>You are signed in</h1>
-          <button onClick={handleSignOut} className={styles.button}>Sign out</button>
-        </div>
-      }
-    </>
+          <Link href="/register" passHref>
+            <Button sx={{ mt: 2 }}>Register</Button>
+          </Link>
+        </Box>
+      ) : (
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            You are signed in
+          </Typography>
+          <Button variant="contained" color="secondary" onClick={handleSignOut} sx={{ mt: 2 }}>
+            Sign out
+          </Button>
+        </Box>
+      )}
+    </Container>
   );
 };
 
