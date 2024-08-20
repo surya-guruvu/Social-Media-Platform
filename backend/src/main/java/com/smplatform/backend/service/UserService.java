@@ -4,6 +4,8 @@ import com.smplatform.backend.exception.EmailNotPresentException;
 import com.smplatform.backend.model.User;
 import com.smplatform.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -36,6 +38,10 @@ public class UserService implements UserDetailsService {
         }
 
         String username = user.getUsername();
+
+        if(username==null){
+            username = user.getEmail();
+        }
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(username)
@@ -80,5 +86,19 @@ public class UserService implements UserDetailsService {
 
         emailService.sendEmail(user.getEmail(), subject, body);
     }
+
+    public UserDetails getCurrentUserDetails() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            return (UserDetails) authentication.getPrincipal();
+        }
+        return null;
+    }
+    
+    public String getCurrentUserIdentifier() {
+        UserDetails userDetails = getCurrentUserDetails();
+        return (userDetails != null) ? userDetails.getUsername() : null;
+    }
+
 
 }

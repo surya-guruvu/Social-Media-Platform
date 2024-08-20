@@ -24,12 +24,14 @@ public class User {
     @Column(nullable = true) // Nullable for OAuth2 users
     private String password;
 
-    // @Column(nullable = true, unique = true) // Email is used as the unique identifier for OAuth2
+    @Column(nullable = true, unique = true) // Email is used as the unique identifier for OAuth2
     private String email;
 
     private String name; // Optional, could be populated from OAuth2 or other sources
 
-    private Boolean emailVerified;
+    private Boolean emailVerified = false;
+
+    private Boolean oAuthUser = false;
 
     // Default constructor
     public User() {

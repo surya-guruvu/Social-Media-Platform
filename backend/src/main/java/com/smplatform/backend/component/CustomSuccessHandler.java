@@ -63,6 +63,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
             User user = fetchUserDetailsFromProvider(accessToken);
             user.setEmailVerified(true);
+            user.setOAuthUser(true);
 
             String jwt = "";
 
@@ -76,6 +77,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                     existingUser.setEmail(user.getEmail());
                     existingUser.setName(user.getName());
                     existingUser.setEmailVerified(true);
+                    existingUser.setOAuthUser(true);
                     userService.save(existingUser);
                 }
             }
