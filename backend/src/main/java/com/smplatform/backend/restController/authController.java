@@ -7,11 +7,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.smplatform.backend.exception.UserNotPresentException;
+import com.smplatform.backend.model.User;
 import com.smplatform.backend.service.JwtUtil;
+import com.smplatform.backend.service.UserService;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +28,7 @@ public class authController {
     private AuthenticationManager authManager;
     
     @Autowired
-    private UserDetailsService userService;
+    private UserService userService;
 
     @Autowired
     public JwtUtil jwtUtil;
@@ -53,7 +55,24 @@ public class authController {
 
     }
 
+    @PostMapping("updatePassword")
+    public ResponseEntity<?>  updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
 
+        String identifier = updatePasswordRequest.getIdentifier();
+        String password = updatePasswordRequest.getPassword();
+
+        User user = userService.findByIdentifier(identifier);
+
+        if(user==null){
+            throw new UserNotPresentException("These user details are not registered");
+        }
+
+        user.setPassword(password);
+        
+        userService.save(user);
+
+        return ResponseEntity.ok("Password update mail is sent to your registered email address");
+    }
 
 }
 
@@ -90,5 +109,28 @@ class AuthenticationResponse {
 
     public String getJwt() {
         return jwt;
+    }
+}
+
+
+class UpdatePasswordRequest {
+    private String identifier;
+    private String password;
+
+    // Getters and setters
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setUsername(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

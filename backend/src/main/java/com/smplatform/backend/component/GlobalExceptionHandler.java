@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import com.smplatform.backend.exception.DuplicateUsernameException;
 import com.smplatform.backend.exception.EmailNotPresentException;
 import com.smplatform.backend.exception.EmailNotSendException;
+import com.smplatform.backend.exception.UserNotPresentException;
 
 import io.jsonwebtoken.MalformedJwtException;
 
@@ -40,6 +41,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmailNotPresentException.class)
     public ResponseEntity<String> handleEmailNotPresentException(EmailNotPresentException ex) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(UserNotPresentException.class)
+    public ResponseEntity<String> handleUserNotPresentException(UserNotPresentException ex) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(ex.getMessage());
     }
 
