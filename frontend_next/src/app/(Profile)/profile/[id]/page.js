@@ -2,9 +2,10 @@
 
 
 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Container, Typography, Paper, Tabs, Tab, Box, Grid } from '@mui/material';
 import AvatarImage from './AvatarImage';
+import { AuthContext } from '@/app/layout';
 
 function TabPanel(props) {
   const { children, value, index,pad, ...other } = props;
@@ -27,6 +28,7 @@ function TabPanel(props) {
 const ProfilePage = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [selectedAboutTab, setSelectedAboutTab] = useState(0);
+  const {username,email} = useContext(AuthContext);
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -46,11 +48,11 @@ const ProfilePage = () => {
         </Grid>
             
         <Typography variant="h5" align="center" gutterBottom>
-            User Name
+            {username}
         </Typography>
             
         <Typography variant="subtitle1" align="center" color="textSecondary" gutterBottom>
-            username@example.com
+            {email}
         </Typography>
 
 

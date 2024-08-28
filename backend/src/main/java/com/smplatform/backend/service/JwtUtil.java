@@ -5,6 +5,8 @@ package com.smplatform.backend.service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.smplatform.backend.model.User;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -56,9 +58,10 @@ public class JwtUtil {
         return createToken(claims, identifier);
     }
 
-    public static Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractIdentifier(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public static Boolean validateToken(String token, User user) {
+        final String identifier = extractIdentifier(token);
+
+        return ((identifier.equals(user.getUsername()) || (identifier.equals(user.getEmail()))) && !isTokenExpired(token));
     }
 
 }

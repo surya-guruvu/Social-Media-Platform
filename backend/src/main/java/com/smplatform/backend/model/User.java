@@ -18,6 +18,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
+
+    @Column(unique = true, nullable = false)
+    private String uniqueId;
+
     @Column(nullable = true, unique = true) // Username is optional and unique for username/password auth
     private String username;
 

@@ -15,7 +15,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.smplatform.backend.exception.DuplicateEmailException;
 import com.smplatform.backend.model.User;
+import com.smplatform.backend.repository.UserRepository;
 import com.smplatform.backend.service.JwtUtil;
 import com.smplatform.backend.service.UserService;
 
@@ -26,6 +28,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 // import java.net.URLEncoder;
 import java.util.Base64;
+import java.util.UUID;
 
 @Component
 
@@ -34,6 +37,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     @Autowired
     private UserService userService;
+
+    @Autowired UserRepository userRepository;
 
     private final OAuth2AuthorizedClientService authorizedClientService;
 
@@ -71,14 +76,16 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 User existingUser = userService.findByEmail(user.getEmail());
 
                 if(existingUser == null){
+                    user.setUniqueId(UUID.randomUUID().toString());
+                    user.setOAuthUser(true);
+                    user.setEmailVerified(true);
                     userService.save(user);
                 }
                 else{
-                    existingUser.setEmail(user.getEmail());
-                    existingUser.setName(user.getName());
-                    existingUser.setEmailVerified(true);
                     existingUser.setOAuthUser(true);
-                    userService.save(existingUser);
+                    existingUser.setEmailVerified(true);
+                    userRepository.save(existingUser);
+                    
                 }
             }
 

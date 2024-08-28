@@ -10,7 +10,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.smplatform.backend.model.User;
 import com.smplatform.backend.service.JwtUtil;
+import com.smplatform.backend.service.UserService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,15 +24,13 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtRequestFilter extends OncePerRequestFilter{
 
     @Autowired
-    private UserDetailsService userService;
+    private UserService userService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,@NonNull HttpServletResponse response,@NonNull FilterChain filterChain)
             throws ServletException, IOException{
         
         final String authHeader = request.getHeader("Authorization");
-
-        // System.out.println(authHeader);
 
         String identifier = "";
         String jwt = ""; 
@@ -47,8 +48,9 @@ public class JwtRequestFilter extends OncePerRequestFilter{
 
         if (identifier.length()!=0 && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userService.loadUserByUsername(identifier);
+            User user = this.userService.findByIdentifier(identifier);
 
-            if (JwtUtil.validateToken(jwt, userDetails)) {
+            if (JwtUtil.validateToken(jwt, user)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken

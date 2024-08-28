@@ -15,8 +15,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [authenticated, setAuthenticated] = useState(false);
-  // const {authenticated, setAuthenticated} = useContext(AuthContext);
+  const {authenticated, setAuthenticated} = useContext(AuthContext);
   const router = useRouter();
   
 

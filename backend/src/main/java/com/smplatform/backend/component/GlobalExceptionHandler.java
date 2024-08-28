@@ -6,6 +6,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.smplatform.backend.exception.DuplicateEmailException;
 import com.smplatform.backend.exception.DuplicateUsernameException;
 import com.smplatform.backend.exception.EmailNotPresentException;
 import com.smplatform.backend.exception.EmailNotSendException;
@@ -26,6 +27,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateUsernameException.class)
     public ResponseEntity<String> handleDuplicateUsernameException(DuplicateUsernameException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<String> handleDuplicateEmailException(DuplicateEmailException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 

@@ -7,49 +7,12 @@ import axios from "axios";
 import { AuthContext } from "./layout";
 
 export default function HomePage() {
-  const [authenticated, setAuthenticated] = useState(false);
-  // const {authenticated, setAuthenticated} = useContext(AuthContext);
-  const [oAuthUser,setOAuthUser] = useState(false);
-  const [uniqueId,setUniqueId] = useState('');
-  const [username,setUsername] = useState('');
-
-  useEffect(() => {
-    const jwtToken = localStorage.getItem('jwtToken');
-
-    if (jwtToken != null) {
-      setAuthenticated(true);
-    }
-  }, []);
+  const {authenticated,setAuthenticated,oAuthUser,setOAuthUser,uniqueId,setUniqueId,username,setUsername,emailVerified,setEmailVerified} = useContext(AuthContext);
 
   const handleSignOut = () => {
     localStorage.removeItem('jwtToken');
     setAuthenticated(false);
   };
-
-  useEffect(()=>{
-    setUsername('');
-    setUniqueId('');
-    setOAuthUser(false);
-    
-    if(authenticated){
-      const jwtToken = localStorage.getItem('jwtToken');
-      axios.get('http://localhost:8080/userUniqueId',
-        {
-          headers: { 'Authorization': `Bearer ${jwtToken}` }
-        }
-      )
-      .then((response)=>{
-        setUsername(response.data.username);
-        setUniqueId(response.data.uniqueId);
-        setOAuthUser(response.data.oauthUser);
-
-        console.log(oAuthUser);
-      })
-      .catch((err)=>{
-        console.log(err);
-      });
-    }
-  },[authenticated]);
 
   return (
     <Container>
@@ -85,7 +48,7 @@ export default function HomePage() {
             </Button>
           </Box>
 
-          {!oAuthUser &&
+          {(!oAuthUser && !emailVerified) &&
             <Box sx={{ mt: 4 }}>
               <Button variant="contained" color="primary" component={Link} href="/updateEmail">
                 Add/Update Email

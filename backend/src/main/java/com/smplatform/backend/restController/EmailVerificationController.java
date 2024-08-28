@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.smplatform.backend.exception.DuplicateEmailException;
 import com.smplatform.backend.exception.EmailNotPresentException;
 import com.smplatform.backend.exception.EmailNotSendException;
 import com.smplatform.backend.model.User;
@@ -37,11 +38,17 @@ public class EmailVerificationController {
 
         String jwt = header.substring(7);
         String identifier = JwtUtil.extractIdentifier(jwt);
-        
         User user = userService.findByIdentifier(identifier);
         user.setEmail(email);
         user.setEmailVerified(false);
-        userRepository.save(user);
+        
+        try{
+            userRepository.save(user);
+        }
+        catch(Exception e){
+            System.out.println(e);
+            throw new DuplicateEmailException("This Email is already used");
+        }
 
         try{
             String token = JwtUtil.generateToken(email);
