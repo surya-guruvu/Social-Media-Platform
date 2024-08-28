@@ -3,7 +3,7 @@
 
 
 import React, { useState } from 'react';
-import { Container, Typography, Paper, Avatar, Tabs, Tab, Box, Grid } from '@mui/material';
+import { Container, Typography, Paper, Tabs, Tab, Box, Grid } from '@mui/material';
 import AvatarImage from './AvatarImage';
 
 function TabPanel(props) {
@@ -41,11 +41,6 @@ const ProfilePage = () => {
       <Paper elevation={2} style={{ padding: '2rem' }}>
         <Grid container spacing={2} justifyContent="center">
             <Grid item>
-                {/* <Avatar
-                alt="User Name"
-                src="/static/images/avatar/1.jpg"
-                sx={{ width: 80, height: 80 }}
-                /> */}
                 <AvatarImage/>
             </Grid>
         </Grid>
@@ -64,8 +59,8 @@ const ProfilePage = () => {
           onChange={handleTabChange}
           indicatorColor="primary"
           textColor="primary"
-          variant="scrollable"
           aria-label="profile sections"
+          variant="scrollable"
           scrollButtons="auto"
         >
             <Tab label="Posts" wrapped/>
@@ -113,10 +108,10 @@ const ProfilePage = () => {
                     }}
                 >
                     <Tab label="Overview" />
+                    <Tab label="Work and Education" />
                     <Tab label="Contact Info" />
                     <Tab label="Hobbies" />
-                    <Tab label="Life Events" />
-                    <Tab label="Addtional Info" />
+                    <Tab label="Family and RelationShip" />
                 </Tabs>
               </Grid>
 
@@ -127,20 +122,20 @@ const ProfilePage = () => {
                       <Typography variant="body1">Overview</Typography>
                   </TabPanel>
                   <TabPanel value={selectedAboutTab} index={1}>
+                      <Typography variant="h6">Work and Education</Typography>
+                      <Typography variant="body1">Work and Education</Typography>
+                  </TabPanel>
+                  <TabPanel value={selectedAboutTab} index={2}>
                       <Typography variant="h6">Contact</Typography>
                       <Typography variant="body1">Contact</Typography>
                   </TabPanel>
-                  <TabPanel value={selectedAboutTab} index={2}>
+                  <TabPanel value={selectedAboutTab} index={3}>
                       <Typography variant="h6">Hobbies</Typography>
                       <Typography variant="body1">Hobbies</Typography>
                   </TabPanel>
-                  <TabPanel value={selectedAboutTab} index={3}>
-                      <Typography variant="h6">Life Events</Typography>
-                      <Typography variant="body1">Life Events</Typography>
-                  </TabPanel>
                   <TabPanel value={selectedAboutTab} index={4}>
-                      <Typography variant="h6">Addtional Info</Typography>
-                      <Typography variant="body1">Addtional Info</Typography>
+                      <Typography variant="h6">Family and RelationShip</Typography>
+                      <Typography variant="body1">Family and RelationShip</Typography>
                   </TabPanel>
                 </Paper>
               </Grid>

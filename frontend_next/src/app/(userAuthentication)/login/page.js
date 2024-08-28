@@ -1,11 +1,13 @@
 'use client';
 
 import axios from 'axios';
-import { useState, useEffect } from 'react';
-import { Button, TextField, Container, Typography, CircularProgress, Alert, Box } from '@mui/material';
+import { useState, useEffect, useContext } from 'react';
+import { Button, TextField, Container, Typography, CircularProgress, Alert, Box, } from '@mui/material';
 import GoogleSignInButton from '../../components/GoogleSignInButton';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+
+import { AuthContext } from '@/app/layout';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -14,6 +16,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
+  // const {authenticated, setAuthenticated} = useContext(AuthContext);
   const router = useRouter();
   
 
