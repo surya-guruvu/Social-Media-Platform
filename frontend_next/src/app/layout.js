@@ -44,10 +44,14 @@ export default function RootLayout({ children }) {
         setUniqueId(response.data.uniqueId);
         setOAuthUser(response.data.oauthUser);
         setEmail(response.data.email);
-
-        console.log(oAuthUser);
       })
       .catch((err)=>{
+
+        if(err.message == "Network Error"){
+          setAuthenticated(false);
+          localStorage.removeItem(jwtToken);
+        }
+
         console.log(err);
       });
     }

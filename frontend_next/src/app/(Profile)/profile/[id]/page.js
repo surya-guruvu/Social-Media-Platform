@@ -2,21 +2,24 @@
 
 
 
-import React, { useContext, useState } from 'react';
-import { Container, Typography, Paper, Tabs, Tab, Box, Grid } from '@mui/material';
+import React, { useContext, useEffect, useState } from 'react';
+import { Container, Typography, Paper, Tabs, Tab, Box, Grid, Alert } from '@mui/material';
 import AvatarImage from './AvatarImage';
 import { AuthContext } from '@/app/layout';
+import { useParams, useRouter} from 'next/navigation';
+
+import PostCard from './Posts';
+import axios from 'axios';
 
 function TabPanel(props) {
   const { children, value, index,pad, ...other } = props;
 
   return (
-    
         <Box
-        role="tabpanel"
-        hidden={value !== index}
-        {...other}
-        sx={{
+          role="tabpanel"
+          hidden={value !== index}
+          {...other}
+          sx={{
             padding: pad,
           }}
         >
@@ -25,12 +28,27 @@ function TabPanel(props) {
   );
 }
 
+const samplePosts = [
+  { title: 'Post 1', content: 'This is the content of post 1. It has more content than shown here, which is truncated initially.' },
+  { title: 'Post 2', content: 'This is the content of post 2. The Show More button reveals the full post content.' },
+  // Add more posts as needed
+];
+
 const ProfilePage = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [selectedAboutTab, setSelectedAboutTab] = useState(0);
-  const {username,email} = useContext(AuthContext);
+  const [username,setUsername] = useState('');
+  const [email,setEmail] = useState('');
+  const router = useRouter();
+
+  const [displayContent,setDisplayContent] = useState(false);
+  const [errorMessage,setErrorMessage] = useState('');
+
+  const userUniqueId = useParams().id;
+
 
   const handleTabChange = (event, newValue) => {
+    console.log(userUniqueId);
     setSelectedTab(newValue);
   };
 
@@ -38,129 +56,154 @@ const ProfilePage = () => {
     setSelectedAboutTab(newValue);
   };
 
+  useEffect(()=>{
+    setDisplayContent(false);
+
+    axios.get(`http://localhost:8080/profile/userProfile?userUniqueId=${userUniqueId}`)
+    .then((res)=>{
+
+      setUsername(res.data.username);
+      setEmail(res.data.email);
+      setDisplayContent(true);
+    })
+    .catch((err)=>{
+      console.log(err);
+      setDisplayContent(false);
+      setErrorMessage(err.message);
+    })
+  },[]);
+
   return (
-    <Container maxWidth="md" style={{ marginTop: '2rem' }}>
-      <Paper elevation={2} style={{ padding: '2rem' }}>
-        <Grid container spacing={2} justifyContent="center">
-            <Grid item>
-                <AvatarImage/>
-            </Grid>
-        </Grid>
-            
-        <Typography variant="h5" align="center" gutterBottom>
-            {username}
-        </Typography>
-            
-        <Typography variant="subtitle1" align="center" color="textSecondary" gutterBottom>
-            {email}
-        </Typography>
+    <>
+    {displayContent &&
+      <Container maxWidth="md" style={{ marginTop: '2rem' }}>
+        <Paper elevation={2} style={{ padding: '2rem' }}>
+          <Grid container spacing={2} justifyContent="center">
+              <Grid item>
+                  <AvatarImage userUniqueId={userUniqueId}/>
+              </Grid>
+          </Grid>
+              
+          <Typography variant="h5" align="center" gutterBottom>
+              {username}
+          </Typography>
+              
+          <Typography variant="subtitle1" align="center" color="textSecondary" gutterBottom>
+              {email}
+          </Typography>
 
 
-        <Tabs
-          value={selectedTab}
-          onChange={handleTabChange}
-          indicatorColor="primary"
-          textColor="primary"
-          aria-label="profile sections"
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-            <Tab label="Posts" wrapped/>
-            <Tab label="About" />
-            <Tab label="Followers" />
-            <Tab label="Following" />
-            <Tab label="Photos" />
-        </Tabs>
+          <Tabs
+            value={selectedTab}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            aria-label="profile sections"
+            variant="scrollable"
+            scrollButtons="auto"
+          >
+              <Tab label="Posts" wrapped/>
+              <Tab label="About" />
+              <Tab label="Followers" />
+              <Tab label="Following" />
+              <Tab label="Photos" />
+          </Tabs>
+
+          </Paper>
+
+          <Paper style={{ padding: '2rem' }}>
+
+          <TabPanel value={selectedTab} index={0}>
+              <PostCard name={username}/>
+          </TabPanel>
+
+          <TabPanel value={selectedTab} index={1}>
+              <Grid container spacing={2} justifyContent="left">
+                <Grid item xs={2}>
+                  <Tabs
+                      value={selectedAboutTab}
+                      onChange={handleAboutTabChange}
+                      indicatorColor="primary"
+                      textColor="primary"
+                      variant="scrollable"
+                      scrollButtons="auto"
+                      aria-label="profile sections"
+                      orientation="vertical"
+                      role="navigation"
+                      sx={{
+                      border: '1px solid #ddd',        // Border around the Tabs
+                      borderRadius: '4px',             // Optional: rounded corners
+                      backgroundColor: '#f9f9f9',     // Optional: background color
+                      '& .MuiTabs-flexContainer': {
+                      borderRight: '1px solid #ddd', // Border on the right of the tab container
+                      },
+                      '& .MuiTab-root': {
+                          '&.Mui-selected': {
+                          backgroundColor: 'rgba(0, 0, 0, 0.1)', // Highlight color
+                          borderRadius: '4px',
+                          },
+                      },
+                      }}
+                  >
+                      <Tab label="Overview" />
+                      <Tab label="Work and Education" />
+                      <Tab label="Contact Info" />
+                      <Tab label="Hobbies" />
+                      <Tab label="Family and RelationShip" />
+                  </Tabs>
+                </Grid>
+
+                <Grid item xs = {9.5}>
+                  <Paper style={{ padding: '1rem', width:'100%' }}>
+                    <TabPanel value={selectedAboutTab} index={0}>
+                        <Typography variant="h6">Overview</Typography>
+                        <Typography variant="body1">Overview</Typography>
+                    </TabPanel>
+                    <TabPanel value={selectedAboutTab} index={1}>
+                        <Typography variant="h6">Work and Education</Typography>
+                        <Typography variant="body1">Work and Education</Typography>
+                    </TabPanel>
+                    <TabPanel value={selectedAboutTab} index={2}>
+                        <Typography variant="h6">Contact</Typography>
+                        <Typography variant="body1">Contact</Typography>
+                    </TabPanel>
+                    <TabPanel value={selectedAboutTab} index={3}>
+                        <Typography variant="h6">Hobbies</Typography>
+                        <Typography variant="body1">Hobbies</Typography>
+                    </TabPanel>
+                    <TabPanel value={selectedAboutTab} index={4}>
+                        <Typography variant="h6">Family and RelationShip</Typography>
+                        <Typography variant="body1">Family and RelationShip</Typography>
+                    </TabPanel>
+                  </Paper>
+                </Grid>
+
+              </Grid>
+          </TabPanel>
+
+          
+          
+          <TabPanel value={selectedTab} index={2}>
+            <Typography variant="h6">Followers</Typography>
+            <Typography variant="body1">User's Followers</Typography>
+          </TabPanel>
+          <TabPanel value={selectedTab} index={3}>
+            <Typography variant="h6">Following</Typography>
+            <Typography variant="body1">User's followed by current user</Typography>
+          </TabPanel>
+          <TabPanel value={selectedTab} index={4}>
+            <Typography variant="h6">Photos</Typography>
+            <Typography variant="body1">Photos uploaded by the user</Typography>
+          </TabPanel>
 
         </Paper>
-
-        <Paper style={{ padding: '2rem' }}>
-
-        <TabPanel value={selectedTab} index={0}>
-            <Typography variant="h6">Posts</Typography>
-            <Typography variant="body1">These are posts of the user.</Typography>
-        </TabPanel>
-
-        <TabPanel value={selectedTab} index={1}>
-            <Grid container spacing={2} justifyContent="left">
-              <Grid item xs={2}>
-                <Tabs
-                    value={selectedAboutTab}
-                    onChange={handleAboutTabChange}
-                    indicatorColor="primary"
-                    textColor="primary"
-                    variant="scrollable"
-                    scrollButtons="auto"
-                    aria-label="profile sections"
-                    orientation="vertical"
-                    role="navigation"
-                    sx={{
-                    border: '1px solid #ddd',        // Border around the Tabs
-                    borderRadius: '4px',             // Optional: rounded corners
-                    backgroundColor: '#f9f9f9',     // Optional: background color
-                    '& .MuiTabs-flexContainer': {
-                    borderRight: '1px solid #ddd', // Border on the right of the tab container
-                    },
-                    '& .MuiTab-root': {
-                        '&.Mui-selected': {
-                        backgroundColor: 'rgba(0, 0, 0, 0.1)', // Highlight color
-                        borderRadius: '4px',
-                        },
-                    },
-                    }}
-                >
-                    <Tab label="Overview" />
-                    <Tab label="Work and Education" />
-                    <Tab label="Contact Info" />
-                    <Tab label="Hobbies" />
-                    <Tab label="Family and RelationShip" />
-                </Tabs>
-              </Grid>
-
-              <Grid item xs = {9.5}>
-                <Paper style={{ padding: '1rem', width:'100%' }}>
-                  <TabPanel value={selectedAboutTab} index={0}>
-                      <Typography variant="h6">Overview</Typography>
-                      <Typography variant="body1">Overview</Typography>
-                  </TabPanel>
-                  <TabPanel value={selectedAboutTab} index={1}>
-                      <Typography variant="h6">Work and Education</Typography>
-                      <Typography variant="body1">Work and Education</Typography>
-                  </TabPanel>
-                  <TabPanel value={selectedAboutTab} index={2}>
-                      <Typography variant="h6">Contact</Typography>
-                      <Typography variant="body1">Contact</Typography>
-                  </TabPanel>
-                  <TabPanel value={selectedAboutTab} index={3}>
-                      <Typography variant="h6">Hobbies</Typography>
-                      <Typography variant="body1">Hobbies</Typography>
-                  </TabPanel>
-                  <TabPanel value={selectedAboutTab} index={4}>
-                      <Typography variant="h6">Family and RelationShip</Typography>
-                      <Typography variant="body1">Family and RelationShip</Typography>
-                  </TabPanel>
-                </Paper>
-              </Grid>
-
-            </Grid>
-        </TabPanel>
+      </Container>
+    }
+    {errorMessage && <Alert severity="error" onClose={() => router.push('/')} sx={{ mt: 2 }}>{errorMessage}</Alert>}
+    </>
 
 
-        <TabPanel value={selectedTab} index={2}>
-          <Typography variant="h6">Followers</Typography>
-          <Typography variant="body1">User's Followers</Typography>
-        </TabPanel>
-        <TabPanel value={selectedTab} index={3}>
-          <Typography variant="h6">Following</Typography>
-          <Typography variant="body1">User's followed by current user</Typography>
-        </TabPanel>
-        <TabPanel value={selectedTab} index={4}>
-          <Typography variant="h6">Photos</Typography>
-          <Typography variant="body1">Photos uploaded by the user</Typography>
-        </TabPanel>
-
-      </Paper>
-    </Container>
+    
   );
 };
 

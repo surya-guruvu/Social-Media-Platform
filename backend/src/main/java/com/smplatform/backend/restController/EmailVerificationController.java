@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.smplatform.backend.exception.DuplicateEmailException;
 import com.smplatform.backend.exception.EmailNotPresentException;
-import com.smplatform.backend.exception.EmailNotSendException;
+import com.smplatform.backend.exception.EmailNotSentException;
 import com.smplatform.backend.model.User;
 import com.smplatform.backend.repository.UserRepository;
 import com.smplatform.backend.service.JwtUtil;
@@ -55,7 +55,7 @@ public class EmailVerificationController {
             userService.sendVerificationEmail(user, token);
         }
         catch(Exception e){
-            throw new EmailNotSendException("Email Updated, But not able to send verification email");
+            throw new EmailNotSentException("Email Updated, But not able to send verification email");
         }
 
         return "Request was successful";

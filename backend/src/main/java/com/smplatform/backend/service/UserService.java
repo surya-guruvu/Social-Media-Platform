@@ -67,6 +67,12 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+    public User findByUniqueId(String userUniqueId){
+        User user = userRepository.findByUniqueId(userUniqueId);
+
+        return user;
+    }
+
 
     public User save(User user){
 

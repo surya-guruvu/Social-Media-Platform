@@ -2,7 +2,6 @@ package com.smplatform.backend.service;
 
 
 // import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.smplatform.backend.model.User;

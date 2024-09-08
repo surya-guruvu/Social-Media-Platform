@@ -6,7 +6,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-// import org.springframework.security.crypto.codec.Utf8;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.smplatform.backend.exception.DuplicateEmailException;
 import com.smplatform.backend.model.User;
 import com.smplatform.backend.repository.UserRepository;
 import com.smplatform.backend.service.JwtUtil;
@@ -52,8 +50,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         if (authentication instanceof OAuth2AuthenticationToken) {
             OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-
-            // System.out.println(oauthToken);
 
             // Retrieve the OAuth2AuthorizedClient
             // Loads Authorized Client object associated with current session, and gets AccessToken from that.
