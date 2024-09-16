@@ -2,7 +2,6 @@ package com.smplatform.backend.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,24 +11,20 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "user_comments")
-public class Comments {
-
+@Table(name = "user_likes")
+public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
+    
+    private Boolean active;
 
-    private Long parentId;
+    private String type; //Like for Post/Comment
 
-    private Long parentUserId;
+    private Long parentId; //Post or Comment
 
-    private Long userId; //Comment by user
-
-    @Column(columnDefinition = "TEXT")
-    private String content;
+    private Long userId; // user who liked
 
     private LocalDateTime timeStamp;
-
-    private Long activityId;
 
 }

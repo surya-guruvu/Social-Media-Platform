@@ -1,115 +1,50 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Collapse from '@mui/material/Collapse';
-import Avatar from '@mui/material/Avatar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+'use client'
 
-const ExpandMore = styled((props) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme }) => ({
-  marginLeft: 'auto',
-  transition: theme.transitions.create('transform', {
-    duration: theme.transitions.duration.shortest,
-  }),
-  variants: [
-    {
-      props: ({ expand }) => !expand,
-      style: {
-        transform: 'rotate(0deg)',
-      },
-    },
-    {
-      props: ({ expand }) => !!expand,
-      style: {
-        transform: 'rotate(180deg)',
-      },
-    },
-  ],
-}));
+import { Psychology } from "@mui/icons-material";
+import axios from "axios";
+import React, { useContext, useEffect, useState } from 'react';
+import PostCard from "./PostCard";
 
-export default function PostCard({name}) {
-  const [expanded, setExpanded] = React.useState(false);
-  const [isFavorited,setIsFavorited] = React.useState(false);
+const Posts = ({ userUniqueId, username, currentUserUniqueId }) => {
+  const [posts, setPosts] = useState([]);
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const response = await axios.get(`http://localhost:8080/posts/userUniqueId?userUniqueId=${userUniqueId}`, {
+          headers: { Authorization: `Bearer ${jwtToken}` }
+        });
 
-  const handleFavoriteClick = () => {
-    setIsFavorited(!isFavorited);
-  };
+        setPosts(response.data);
+
+
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchPosts();
+  }, [userUniqueId]);
 
   return (
-    <Card maxwidth="md">
-        <CardHeader
-            avatar={
-            <Avatar sx={{ bgcolor: red[500] }} aria-label="user-avatar">
-                U
-            </Avatar>
-            }
-            action={
-            <IconButton aria-label="settings">
-                <MoreVertIcon />
-            </IconButton>
-            }
-            title={name}
-            subheader="September 14, 2024"
-        />
+    <div>
+      {
+        posts.map((post)=>{
+          const jsonString = post.content;
+          const obj = JSON.parse(jsonString); 
 
-        <CardMedia
-            component="img"
-            height="194"
-            image="/static/images/cards/paella.jpg"
-            alt="Paella dish"
-        />
+          const options = { year: 'numeric', month: 'long', day: 'numeric' };
+          const dateCur = new Date(post.timeStamp);
+          const formattedDate = dateCur.toLocaleDateString('en-US', options);
 
 
-        <CardContent>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                This impressive paella is a perfect party dish and a fun meal to cook
-                together with your guests. Add 1 cup of frozen peas along with the mussels,
-                if you like.
-            </Typography>
-        </CardContent>
+          return <PostCard key={post.id} content={obj.text} date={formattedDate} name={username} actId={post.activityId} id={post.id} currentUserUniqueId={currentUserUniqueId}/>
+        })
+      }
 
-        <CardActions disableSpacing>
-            <IconButton aria-label="add to favorites" onClick={handleFavoriteClick}>
-                {isFavorited ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
-            </IconButton>
-
-            <IconButton aria-label="share">
-                <ShareIcon />
-            </IconButton>
-        
-            <ExpandMore
-                expand={expanded}
-                onClick={handleExpandClick}
-                aria-expanded={expanded}
-                aria-label="show more"
-            >
-                <ExpandMoreIcon />
-            </ExpandMore>
-        </CardActions>
-
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-            <CardContent>
-            <Typography sx={{ marginBottom: 2 }}>Collapse Content</Typography>
-            </CardContent>
-        </Collapse>
-        
-    </Card>
+    </div>
   );
-}
+};
+
+export default Posts;

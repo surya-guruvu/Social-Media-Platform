@@ -6,6 +6,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.smplatform.backend.exception.ActivityNotFoundException;
 import com.smplatform.backend.exception.DuplicateEmailException;
 import com.smplatform.backend.exception.DuplicateUsernameException;
 import com.smplatform.backend.exception.EmailNotPresentException;
@@ -62,6 +63,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotPresentException.class)
     public ResponseEntity<String> handleUserNotPresentException(UserNotPresentException ex) {
+        logger.error("User not present: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ActivityNotFoundException.class)
+    public ResponseEntity<String> handleActivityNotFoundException(ActivityNotFoundException ex) {
         logger.error("User not present: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }

@@ -2,15 +2,16 @@ package com.smplatform.backend.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.smplatform.backend.model.Likes;
+import com.smplatform.backend.model.Like;
 import java.util.List;
 
 
 
 
-public interface LikesRepository extends JpaRepository<Likes,Long>{
+public interface LikesRepository extends JpaRepository<Like,Long>{
 
-    List<Likes> findAllByParentId(Long parentId);
-    List<Likes> findAllByUserId(Long userId);
+    List<Like> findAllByParentId(Long parentId);
+    List<Like> findAllByUserId(Long userId);
+    List<Like> findByParentIdAndUserId(Long parentId, Long userId);
     
 }

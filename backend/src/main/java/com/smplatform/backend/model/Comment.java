@@ -1,5 +1,7 @@
 package com.smplatform.backend.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,16 +12,24 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "user_posts")
-public class Posts {
+@Table(name = "user_comments")
+public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    private Long userId;
+    private Long parentId;
+
+    private Long parentUserId;
+
+    private Long userId; //Comment by user
 
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    private LocalDateTime timeStamp;
+
     private Long activityId;
+
 }
