@@ -11,6 +11,9 @@ import AboutTab from './AboutTab';
 import PostDialogue from './PostDialogue';
 import Posts from './Posts';
 import TabPanel from './TabPanel';
+import ReccomendationTab from './RecommendationTab';
+import FollowingTab from './FollowingTab';
+import FollowersTab from './FollowerTab';
 
 
 const ProfilePage = () => {
@@ -118,6 +121,7 @@ const ProfilePage = () => {
               <Tab label="Followers" />
               <Tab label="Following" />
               <Tab label="Photos" />
+              <Tab label="Find Friends" />
             </Tabs>
 
           </Paper>
@@ -142,14 +146,12 @@ const ProfilePage = () => {
 
             {/* Followers Tab */}
             <TabPanel value={selectedTab} index={2}>
-              <Typography variant="h6" sx={{ color: '#333' }}>Followers</Typography>
-              <Typography variant="body1">User's Followers</Typography>
+              <FollowersTab userUniqueId={currentUserUniqueId}></FollowersTab>
             </TabPanel>
 
             {/* Following Tab */}
             <TabPanel value={selectedTab} index={3}>
-              <Typography variant="h6" sx={{ color: '#333' }}>Following</Typography>
-              <Typography variant="body1">User's followed by current user</Typography>
+              <FollowingTab userUniqueId={currentUserUniqueId}></FollowingTab>
             </TabPanel>
 
             {/* Photos Tab */}
@@ -157,6 +159,12 @@ const ProfilePage = () => {
               <Typography variant="h6" sx={{ color: '#333' }}>Photos</Typography>
               <Typography variant="body1">Photos uploaded by the user</Typography>
             </TabPanel>
+
+            {/* Reccomendations Tab */}
+            <TabPanel value={selectedTab} index={5}>
+              <ReccomendationTab userUniqueId={currentUserUniqueId}/>
+            </TabPanel>
+
           </Paper>
         </Container>
       }

@@ -14,7 +14,7 @@ export default function TabPanel(props) {
               padding: pad,
             }}
           >
-              {children}
+              {value===index && children}
           </Box>
     );
   }

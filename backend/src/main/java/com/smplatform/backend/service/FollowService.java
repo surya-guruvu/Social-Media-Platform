@@ -23,4 +23,16 @@ public class FollowService {
         return followRepository.findAllByFollowerId(Id);
     }
 
+    public void save(Follow follow){
+        followRepository.save(follow);
+    }
+
+    public void deleteById(Long Id){
+        followRepository.deleteById(Id);
+    }
+
+    public Follow findByFolloweeIdAndFollowerId(Long followeeId,Long followerId){
+        return followRepository.findByFolloweeIdAndFollowerId(followeeId, followerId);
+    }
+
 }

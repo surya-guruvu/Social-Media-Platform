@@ -3,6 +3,8 @@ package com.smplatform.backend.service;
 import com.smplatform.backend.exception.EmailNotPresentException;
 import com.smplatform.backend.model.User;
 import com.smplatform.backend.repository.UserRepository;
+
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -104,6 +106,18 @@ public class UserService implements UserDetailsService {
     public String getCurrentUserIdentifier() {
         UserDetails userDetails = getCurrentUserDetails();
         return (userDetails != null) ? userDetails.getUsername() : null;
+    }
+
+    public List<User> findUserNotFollowedByCurrentUser(Long userId){
+        return userRepository.findUserNotFollowedByCurrentUser(userId);
+    }
+
+    public List<User> findUsersFollowedByCurrentUser(Long userId){
+        return userRepository.findUsersFollowedByCurrentUser(userId);
+    }
+
+    public List<User> findUsersFollowingCurrentUser(Long userId){
+        return userRepository.findUsersFollowingCurrentUser(userId);
     }
 
 

@@ -27,4 +27,8 @@ public class CommentsService {
     public List<Comment> findByUserId(Long Id){
         return commentsRepository.findAllByUserId(Id);
     }
+
+    public void save(Comment comment){
+        commentsRepository.save(comment);
+    }
 }

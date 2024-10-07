@@ -80,7 +80,6 @@ public class profileController {
 
     @GetMapping("/profilePhoto")
     public ResponseEntity<?> getProfilePhoto(@RequestParam("userUniqueId") String userUniqueId) {
-        System.out.println("Received request for userUniqueId: " + userUniqueId);
     
         Path imagePath = null;
         byte[] imageBytes = new byte[0]; 
