@@ -1,6 +1,7 @@
 'use client'
 import { Avatar, Box, Button, Card, CardActions, CardContent, Grid, Typography } from "@mui/material";
 import axios from "axios";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 
@@ -72,12 +73,19 @@ const ReccomendationTab = ({userUniqueId})=>{
                                             
                                         />
                                   
-                                        <Box>
-                                            {recommendation.username?
-                                                <Typography>{recommendation.username}</Typography>
-                                            :
-                                                <Typography>{recommendation.name}</Typography>
-                                            }
+                                        <Box component={Link} sx={{ color: '#333333', cursor: 'pointer', textDecoration: 'none'}} href={`/profile/${recommendation.uniqueId}`}>
+                                            <Typography 
+                                                variant="body1" 
+                                                sx={{ 
+                                                    fontWeight: 'bold', 
+                                                    '&:hover': {
+                                                        textDecoration: 'underline'
+                                                    }
+                                                }}
+                                            >
+                                                {recommendation.username?recommendation.username:recommendation.name}
+                                            </Typography>
+
                                         </Box>
                                     </Box>
 

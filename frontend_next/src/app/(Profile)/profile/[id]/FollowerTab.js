@@ -2,11 +2,12 @@
 
 import { Avatar, Box, Button, Card, CardContent, Grid, Typography } from "@mui/material";
 import axios from "axios";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 
 
-const FollowersTab = ({userUniqueId})=>{
+const FollowersTab = ({userUniqueId,loggedInUserUniqueId})=>{
 
     const [followers,setFollowers] = useState([]);
     const [removedUser,setRemovedUsers] = useState([]);
@@ -33,7 +34,32 @@ const FollowersTab = ({userUniqueId})=>{
 
     },[userUniqueId]);
 
-    const handleUnFollow = (followUserUniqueId)=>{
+    const handleFollow = (followUserUniqueId)=>{
+        const followerUniqueId = loggedInUserUniqueId;
+        const followeeUniqueId = followUserUniqueId;
+        const jwtToken = localStorage.getItem('jwtToken');
+
+        axios.post(`http://localhost:8080/follow/addFollower`,
+            {followeeUniqueId,followerUniqueId},
+            {headers: { Authorization: `Bearer ${jwtToken}` }}
+        )
+        .then((res)=>{
+             const updatedFollowers = followers.map(follower =>{
+                if(follower.uniqueId == followUserUniqueId){
+                    return {...follower,followedByLoggedInUser: true}
+                }
+                return follower
+             })
+
+             setFollowers(updatedFollowers)
+            console.log(res);
+        })
+        .catch((err)=>{
+            console.log(err);
+        });
+    }
+
+    const handleRemoveFollow = (followUserUniqueId)=>{
 
         const jwtToken = localStorage.getItem('jwtToken');
 
@@ -72,20 +98,37 @@ const FollowersTab = ({userUniqueId})=>{
                                             
                                         />
                                   
-                                        <Box>
-                                            {user.username?
-                                                <Typography>{user.username}</Typography>
-                                            :
-                                                <Typography>{user.name}</Typography>
-                                            }
+                                        <Box component={Link} sx={{ color: '#333333', cursor: 'pointer', textDecoration: 'none'}} href={`/profile/${user.uniqueId}`}>
+                                            <Typography 
+                                                variant="body1" 
+                                                sx={{ 
+                                                    fontWeight: 'bold', 
+                                                    '&:hover': {
+                                                        textDecoration: 'underline'
+                                                    }
+                                                }}
+                                            >
+                                                {user.username?user.username:user.name}
+                                            </Typography>
                                         </Box>
                                     </Box>
 
-                                    <Button size="small" variant="contained" color="primary" onClick={() => {handleUnFollow(user.uniqueId)}}
-                                        disabled={removedUser.includes(user.uniqueId)}
+                                    {userUniqueId==loggedInUserUniqueId &&
+                                        <Button size="small" variant="contained" color="primary" onClick={() => {handleRemoveFollow(user.uniqueId)}}
+                                            disabled={removedUser.includes(user.uniqueId)}
+                                            >
+                                            {removedUser.includes(user.uniqueId) ? 'Removed': 'Remove'}
+                                        </Button>
+                                    }
+                                    {userUniqueId!=loggedInUserUniqueId &&
+                                        <Button size="small" variant="contained" color="primary" onClick={() => {handleFollow(user.uniqueId)}}
+                                        disabled={user.followedByLoggedInUser}
+                                        
                                         >
-                                        {removedUser.includes(user.uniqueId) ? 'Removed': 'Remove'}
-                                    </Button>
+                                        {user.followedByLoggedInUser ? 'Following': 'Follow'}
+                                        </Button>
+                                    }
+
                                 </Box>
                             </CardContent>
                         </Card>

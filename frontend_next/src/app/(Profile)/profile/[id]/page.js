@@ -121,7 +121,7 @@ const ProfilePage = () => {
               <Tab label="Followers" />
               <Tab label="Following" />
               <Tab label="Photos" />
-              <Tab label="Find Friends" />
+              {currentUserUniqueId==pageUserUniqueId && <Tab label="Find Friends" />}
             </Tabs>
 
           </Paper>
@@ -146,12 +146,12 @@ const ProfilePage = () => {
 
             {/* Followers Tab */}
             <TabPanel value={selectedTab} index={2}>
-              <FollowersTab userUniqueId={currentUserUniqueId}></FollowersTab>
+              <FollowersTab userUniqueId={pageUserUniqueId} loggedInUserUniqueId={currentUserUniqueId}></FollowersTab>
             </TabPanel>
 
             {/* Following Tab */}
             <TabPanel value={selectedTab} index={3}>
-              <FollowingTab userUniqueId={currentUserUniqueId}></FollowingTab>
+              <FollowingTab userUniqueId={pageUserUniqueId} loggedInUserUniqueId={currentUserUniqueId}></FollowingTab>
             </TabPanel>
 
             {/* Photos Tab */}
@@ -168,6 +168,9 @@ const ProfilePage = () => {
           </Paper>
         </Container>
       }
+
+
+
       {errorMessage &&
         <Alert severity="error" onClose={() => router.push('/')} sx={{ mt: 2 }}>
           {errorMessage}

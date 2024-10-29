@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.smplatform.backend.model.Follow;
 import com.smplatform.backend.model.User;
+import com.smplatform.backend.model.UserDetailsToClient;
 import com.smplatform.backend.service.FollowService;
 import com.smplatform.backend.service.JwtUtil;
 import com.smplatform.backend.service.UserService;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+import java.util.stream.Collectors;
+
 
 
 @RestController
@@ -31,24 +34,62 @@ public class FollowController {
     @Autowired
     private FollowService followService;
 
+    public UserDetailsToClient convertToDto(User user) {
+        UserDetailsToClient dto = new UserDetailsToClient();
+
+        dto.setUsername(user.getUsername());
+        dto.setName(user.getName());
+        dto.setUniqueId(user.getUniqueId());
+        dto.setId(user.getId());
+
+        return dto;
+    }
+
     @GetMapping("getfollowers")
-    public ResponseEntity<?> getFollowers(@RequestParam("userUniqueId") String userUniqueId) {
+    public ResponseEntity<?> getFollowers(@RequestHeader("Authorization") String header,@RequestParam("userUniqueId") String userUniqueId) {
+        String jwt = header.substring(7);
+        String identifier = JwtUtil.extractIdentifier(jwt);
+        User loggedInUser = userService.findByIdentifier(identifier);
+
         User user = userService.findByUniqueId(userUniqueId);
         Long userId = user.getId();
 
         List<User> followersList = userService.findUsersFollowingCurrentUser(userId);
+        List<UserDetailsToClient> dtoFollowersList = followersList.stream().map(this::convertToDto).collect(Collectors.toList());
 
-        return ResponseEntity.ok(followersList);
+        for(UserDetailsToClient userDetailsToClient:dtoFollowersList){
+            Follow tempFollow = followService.findByFolloweeIdAndFollowerId(userDetailsToClient.getId(),loggedInUser.getId());
+
+            if(tempFollow!=null){
+                userDetailsToClient.setFollowedByLoggedInUser(true);
+            }
+        }
+
+        return ResponseEntity.ok(dtoFollowersList);
     }
 
     @GetMapping("getfollowing")
-    public ResponseEntity<?> getFollowing(@RequestParam("userUniqueId") String userUniqueId) {
+    public ResponseEntity<?> getFollowing(@RequestHeader("Authorization") String header,@RequestParam("userUniqueId") String userUniqueId) {
+
+        String jwt = header.substring(7);
+        String identifier = JwtUtil.extractIdentifier(jwt);
+        User loggedInUser = userService.findByIdentifier(identifier);
+
         User user = userService.findByUniqueId(userUniqueId);
         Long userId = user.getId();
 
         List<User> followingList = userService.findUsersFollowedByCurrentUser(userId);
+        List<UserDetailsToClient> dtoFollowingList = followingList.stream().map(this::convertToDto).collect(Collectors.toList());
 
-        return ResponseEntity.ok(followingList);
+        for(UserDetailsToClient userDetailsToClient:dtoFollowingList){
+            Follow tempFollow = followService.findByFolloweeIdAndFollowerId(userDetailsToClient.getId(),loggedInUser.getId());
+
+            if(tempFollow!=null){
+                userDetailsToClient.setFollowedByLoggedInUser(true);
+            }
+        }
+
+        return ResponseEntity.ok(dtoFollowingList);
     }
 
     @GetMapping("removeFollower")
@@ -68,7 +109,7 @@ public class FollowController {
     
 
     @PostMapping("addFollower")
-    public ResponseEntity<?> addFollower(@RequestBody FollowRequest followRequest) {
+    public ResponseEntity<?> addFollower(@RequestHeader("Authorization") String header,@RequestBody FollowRequest followRequest) {
         String followeeUniqueId = followRequest.getFolloweeUniqueId();
         String followerUniqueId = followRequest.getFollowerUniqueId();
 
