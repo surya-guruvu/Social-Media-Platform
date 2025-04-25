@@ -13,16 +13,13 @@ import com.example.user.service.UserService;
 
 @RestController
 @RequestMapping("/userUniqueId")
-public class userController {
+public class UserController {
 
     @Autowired
     private UserService userService;
 
     @GetMapping("/")
     public UserResponse getMethodName(@RequestHeader("Authorization") String header) {
-
-        System.out.println(header);
-
         String jwt = header.substring(7);
         String identifier = JwtUtil.extractIdentifier(jwt);
 

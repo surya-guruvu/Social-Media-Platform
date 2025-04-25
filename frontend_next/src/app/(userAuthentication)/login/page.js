@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { AuthContext } from '@/app/layout';
+import apiClient from '@/app/lib/apiClient';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -33,8 +34,8 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await axios.post(
-        'http://localhost:8080/login',
+      const response = await apiClient.post(
+        'login',
         { username, password },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -54,6 +55,8 @@ const Login = () => {
   };
 
   useEffect(() => {
+    console.log("Debug");
+    console.log(process.env.NEXT_PUBLIC_API_BASE_URL);
     const jwtToken = localStorage.getItem('jwtToken');
     if (jwtToken != null) {
       setAuthenticated(true);

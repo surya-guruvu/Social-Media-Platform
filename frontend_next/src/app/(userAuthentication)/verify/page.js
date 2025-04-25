@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Typography, CircularProgress, Container, Alert } from '@mui/material';
+import apiClient from '@/app/lib/apiClient';
 
 const VerifyPage = () => {
   const [message, setMessage] = useState('');
@@ -15,7 +16,7 @@ const VerifyPage = () => {
     const token = params.get('token');
 
     if (token) {
-      axios.get(`http://localhost:8080/verifyEmail?token=${token}`)
+      apiClient.get(`/verifyEmail?token=${token}`)
         .then((response) => {
           setMessage(response.data);
           setLoading(false);

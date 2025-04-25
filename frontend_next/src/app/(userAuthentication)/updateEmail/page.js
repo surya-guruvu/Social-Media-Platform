@@ -3,6 +3,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { TextField, Button, CircularProgress, Typography, Container, Box, Alert } from '@mui/material';
+import apiClient from "@/app/lib/apiClient";
 
 const AddUpdateEmailPage = () => {
   const [message, setMessage] = useState('');
@@ -16,7 +17,7 @@ const AddUpdateEmailPage = () => {
 
     setLoading(true);
 
-    axios.post("http://localhost:8080/addOrUpdateEmail",
+    apiClient.post("/addOrUpdateEmail",
       { emailAddress },
       {
         headers: { 'Authorization': `Bearer ${jwtToken}` }

@@ -1,4 +1,5 @@
 'use client'
+import apiClient from "@/app/lib/apiClient";
 import { Avatar, Box, Button, Card, CardActions, CardContent, Grid, Typography } from "@mui/material";
 import axios from "axios";
 import Link from "next/link";
@@ -17,7 +18,7 @@ const ReccomendationTab = ({userUniqueId})=>{
         }
 
         const jwtToken = localStorage.getItem('jwtToken');
-        axios.get(`http://localhost:8080/getRecommendations?userUniqueId=${userUniqueId}`,
+        apiClient.get(`/getRecommendations?userUniqueId=${userUniqueId}`,
             {
                 headers: { Authorization: `Bearer ${jwtToken}` }
             }
@@ -37,7 +38,7 @@ const ReccomendationTab = ({userUniqueId})=>{
         const followeeUniqueId = followUserUniqueId;
         const jwtToken = localStorage.getItem('jwtToken');
 
-        axios.post(`http://localhost:8080/follow/addFollower`,
+        apiClient.post(`/follow/addFollower`,
             {followeeUniqueId,followerUniqueId},
             {headers: { Authorization: `Bearer ${jwtToken}` }}
         )

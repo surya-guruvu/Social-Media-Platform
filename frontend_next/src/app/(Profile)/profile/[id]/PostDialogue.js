@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Dialog, DialogTitle, DialogContent, TextField , DialogActions, Button} from "@mui/material";
 import axios from "axios";
+import apiClient from "@/app/lib/apiClient";
 
 const PostDialogue = ({open, onClose, userUniqueId, setSnackBarSeverity, setSnackBarMessage, setSnackBarOpen})=>{
     const [text,setText] = useState('');
@@ -10,7 +11,7 @@ const PostDialogue = ({open, onClose, userUniqueId, setSnackBarSeverity, setSnac
     const handlePost = ()=>{
         const jwtToken = localStorage.getItem('jwtToken');
         
-        axios.post(`http://localhost:8080/posts/userUniqueId?userUniqueId=${userUniqueId}`,{text},
+        apiClient.post(`/posts/userUniqueId?userUniqueId=${userUniqueId}`,{text},
             {
                 headers: { 'Authorization': `Bearer ${jwtToken}` }
             }

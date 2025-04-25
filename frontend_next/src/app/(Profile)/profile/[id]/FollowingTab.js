@@ -1,5 +1,6 @@
 'use Client'
 
+import apiClient from "@/app/lib/apiClient";
 import { Avatar, Box, Button, Card, CardContent, Grid, Typography } from "@mui/material";
 import axios from "axios";
 import Link from "next/link";
@@ -19,7 +20,7 @@ const FollowingTab = ({userUniqueId,loggedInUserUniqueId})=>{
         }
 
         const jwtToken = localStorage.getItem('jwtToken');
-        axios.get(`http://localhost:8080/follow/getfollowing?userUniqueId=${userUniqueId}`,
+        apiClient.get(`/follow/getfollowing?userUniqueId=${userUniqueId}`,
             {
                 headers: { Authorization: `Bearer ${jwtToken}` }
             }
@@ -39,7 +40,7 @@ const FollowingTab = ({userUniqueId,loggedInUserUniqueId})=>{
         const followeeUniqueId = followUserUniqueId;
         const jwtToken = localStorage.getItem('jwtToken');
 
-        axios.post(`http://localhost:8080/follow/addFollower`,
+        apiClient.post(`/follow/addFollower`,
             {followeeUniqueId,followerUniqueId},
             {headers: { Authorization: `Bearer ${jwtToken}` }}
         )
@@ -64,7 +65,7 @@ const FollowingTab = ({userUniqueId,loggedInUserUniqueId})=>{
         const followeeUniqueId = followUserUniqueId;
         const jwtToken = localStorage.getItem('jwtToken');
 
-        axios.get(`http://localhost:8080/follow/unFollow?userUniqueId=${followUserUniqueId}`,
+        apiClient.get(`/follow/unFollow?userUniqueId=${followUserUniqueId}`,
             {headers: { Authorization: `Bearer ${jwtToken}` }}
         )
         .then((res)=>{

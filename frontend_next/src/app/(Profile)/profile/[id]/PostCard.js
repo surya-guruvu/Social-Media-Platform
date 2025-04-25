@@ -18,6 +18,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import axios from 'axios';
 import { useEffect, useState} from 'react';
+import apiClient from '@/app/lib/apiClient';
 
 
 const ExpandMore = styled((props) => {
@@ -57,7 +58,7 @@ export default function PostCard({name,content,date,actId, id, currentUserUnique
 
   const handleFavoriteClick = () => {
     const jwtToken = localStorage.getItem('jwtToken');
-    axios.post("http://localhost:8080/likeRequest",
+    apiClient.post("likeRequest",
       { "parentId":id,"userUniqueId":currentUserUniqueId,"type":activityType},
       { headers: { 'Authorization': `Bearer ${jwtToken}`,'Content-Type': 'application/json' } }
     )
@@ -83,7 +84,7 @@ export default function PostCard({name,content,date,actId, id, currentUserUnique
   useEffect(()=>{
     const jwtToken = localStorage.getItem('jwtToken');
 
-    axios.get(`http://localhost:8080/likeRequest?activityId=${actId}`,{
+    apiClient.get(`/likeRequest?activityId=${actId}`,{
       headers: { Authorization: `Bearer ${jwtToken}` }
     })
     .then((res)=>{
@@ -96,7 +97,7 @@ export default function PostCard({name,content,date,actId, id, currentUserUnique
 
   useEffect(()=>{
     const jwtToken = localStorage.getItem('jwtToken');
-    axios.get(`http://localhost:8080/checkUserLiked?parentId=${id}&userUniqueId=${currentUserUniqueId}`,{
+    apiClient.get(`/checkUserLiked?parentId=${id}&userUniqueId=${currentUserUniqueId}`,{
       headers: { Authorization: `Bearer ${jwtToken}` }
     })
     .then((res)=>{

@@ -8,6 +8,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { useTheme } from '@mui/material/styles';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import apiClient from "./lib/apiClient";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -41,7 +42,7 @@ export default function RootLayout({ children }) {
     
     if(authenticated){
       const jwtToken = localStorage.getItem('jwtToken');
-      axios.get('http://localhost:8080/userUniqueId',
+      apiClient.get('userUniqueId',
         {
           headers: { 'Authorization': `Bearer ${jwtToken}` }
         }

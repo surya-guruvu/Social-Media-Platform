@@ -10,6 +10,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Grid } from '@mui/material';
 import axios from 'axios';
+import apiClient from '@/app/lib/apiClient';
 
 const AvatarImage = ({ userUniqueId }) => {
   const [open, setOpen] = useState(false);
@@ -32,7 +33,7 @@ const AvatarImage = ({ userUniqueId }) => {
       const jwtToken = localStorage.getItem('jwtToken');
 
       if (jwtToken) {
-        axios.post("http://localhost:8080/profile/ImageUpload", formData, {
+        apiClient.post("profile/ImageUpload", formData, {
           headers: {
             'Authorization': `Bearer ${jwtToken}`,
             'Content-Type': 'multipart/form-data'
@@ -59,7 +60,7 @@ const AvatarImage = ({ userUniqueId }) => {
     const jwtToken = localStorage.getItem('jwtToken');
 
     if (userUniqueId) {
-      axios.get(`http://localhost:8080/profile/deleteProfilePhoto?userUniqueId=${userUniqueId}`, {
+      apiClient.get(`/profile/deleteProfilePhoto?userUniqueId=${userUniqueId}`, {
           headers: {
             'Authorization': `Bearer ${jwtToken}`
           }
@@ -78,7 +79,7 @@ const AvatarImage = ({ userUniqueId }) => {
     const jwtToken = localStorage.getItem('jwtToken');
 
     if (userUniqueId) {
-      axios.get(`http://localhost:8080/profile/profilePhoto?userUniqueId=${userUniqueId}`, {
+      apiClient.get(`/profile/getProfilePhoto?userUniqueId=${userUniqueId}`, {
         responseType: 'blob' // Ensure the response is handled as a blob
       })
       .then((res) => {

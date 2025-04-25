@@ -3,6 +3,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { Button, CircularProgress, Typography, Container, Box, Alert } from '@mui/material';
+import apiClient from "../lib/apiClient";
 
 const SendVerificationEmailPage = () => {
   const [message, setMessage] = useState('');
@@ -13,7 +14,7 @@ const SendVerificationEmailPage = () => {
     const jwtToken = localStorage.getItem('jwtToken');
     setLoading(true);
 
-    axios.get("http://localhost:8080/sendVerficationEmail", {
+    apiClient.get('/sendVerficationEmail', {
       headers: { 'Authorization': `Bearer ${jwtToken}` }
     })
       .then((response) => {

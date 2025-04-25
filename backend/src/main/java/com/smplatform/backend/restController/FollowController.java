@@ -3,9 +3,9 @@ package com.smplatform.backend.restController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.smplatform.backend.DTO.UserDetailsToClient;
 import com.smplatform.backend.model.Follow;
 import com.smplatform.backend.model.User;
-import com.smplatform.backend.model.UserDetailsToClient;
 import com.smplatform.backend.service.FollowService;
 import com.smplatform.backend.service.JwtUtil;
 import com.smplatform.backend.service.UserService;

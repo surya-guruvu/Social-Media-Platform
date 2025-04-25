@@ -4,6 +4,7 @@ import { Psychology } from "@mui/icons-material";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from 'react';
 import PostCard from "./PostCard";
+import apiClient from "@/app/lib/apiClient";
 
 const Posts = ({ userUniqueId, username, currentUserUniqueId }) => {
   const [posts, setPosts] = useState([]);
@@ -12,7 +13,7 @@ const Posts = ({ userUniqueId, username, currentUserUniqueId }) => {
     const fetchPosts = async () => {
       try {
         const jwtToken = localStorage.getItem('jwtToken');
-        const response = await axios.get(`http://localhost:8080/posts/userUniqueId?userUniqueId=${userUniqueId}`, {
+        const response = await apiClient.get(`posts/userUniqueId?userUniqueId=${userUniqueId}`, {
           headers: { Authorization: `Bearer ${jwtToken}` }
         });
 

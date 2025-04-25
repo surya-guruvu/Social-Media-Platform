@@ -1,4 +1,4 @@
-package com.smplatform.backend.model;
+package com.smplatform.backend.DTO;
 
 import lombok.Data;
 

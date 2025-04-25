@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Container, Typography, TextField, Button, CircularProgress, Alert } from '@mui/material';
 import axios from 'axios';
+import apiClient from '@/app/lib/apiClient';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -16,8 +17,8 @@ const Register = () => {
     setError('');
     
     try {
-      const response = await axios.post(
-        'http://localhost:8080/register',
+      const response = apiClient.post(
+        'register',
         { username, password },
         { headers: { 'Content-Type': 'application/json' } }
       );

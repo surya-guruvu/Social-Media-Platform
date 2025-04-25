@@ -1,13 +1,15 @@
 package com.smplatform.backend.restController;
 
 
-import com.smplatform.backend.exception.DuplicateUsernameException;
+import com.smplatform.backend.client.UserServiceClient;
 import com.smplatform.backend.model.User;
-import com.smplatform.backend.service.UserService;
+
+import feign.FeignException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.UUID;
 
 
 @RestController
@@ -15,25 +17,18 @@ import java.util.UUID;
 public class RegistrationController {
 
     @Autowired
-    private UserService userService;
+    private UserServiceClient userServiceClient;
 
     @PostMapping("register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
-
-        String username = user.getUsername();
-
-        User existingUser = userService.findByUsername(username);
-
-        if(existingUser != null){
-            throw new DuplicateUsernameException("This username already exists");
+    
+        try {
+            return userServiceClient.registerUser(user); // 200 OK response
+        } catch (FeignException.Conflict ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.contentUTF8()); // 409
+        } catch (FeignException ex) {
+            return ResponseEntity.status(ex.status()).body(ex.contentUTF8()); // Other errors
         }
-
-        user.setUniqueId(UUID.randomUUID().toString());
-
-        userService.save(user);
-
-        return ResponseEntity.ok("User has been registered successfully");
     }
-
-
+        
 }

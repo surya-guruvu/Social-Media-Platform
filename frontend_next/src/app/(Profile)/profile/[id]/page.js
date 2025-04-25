@@ -14,6 +14,7 @@ import TabPanel from './TabPanel';
 import ReccomendationTab from './RecommendationTab';
 import FollowingTab from './FollowingTab';
 import FollowersTab from './FollowerTab';
+import apiClient from '@/app/lib/apiClient';
 
 
 const ProfilePage = () => {
@@ -51,7 +52,7 @@ const ProfilePage = () => {
   useEffect(() => {
     setDisplayContent(false);
 
-    axios.get(`http://localhost:8080/profile/userProfile?userUniqueId=${pageUserUniqueId}`)
+    apiClient.get(`/profile/userProfile?userUniqueId=${pageUserUniqueId}`)
       .then((res) => {
         setUsername(res.data.username);
         setEmail(res.data.email);
