@@ -1,6 +1,7 @@
 'use client'
 import apiClient from "@/app/lib/apiClient";
 import { Avatar, Box, Button, Card, CardActions, CardContent, Grid, Typography } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -10,6 +11,7 @@ const ReccomendationTab = ({userUniqueId})=>{
 
     const [recommendations,setRecommendations] = useState([]);
     const [followedUsers,setFollowedUsers] = useState([]);
+    const queryClient = useQueryClient();
 
     useEffect(()=>{
 
@@ -33,17 +35,23 @@ const ReccomendationTab = ({userUniqueId})=>{
 
     },[userUniqueId]);
 
-    const handleFollow = (followUserUniqueId)=>{
+    const handleFollow = (followUser)=>{
         const followerUniqueId = userUniqueId;
-        const followeeUniqueId = followUserUniqueId;
+        const followeeUniqueId = followUser.uniqueId;
         const jwtToken = localStorage.getItem('jwtToken');
+        
 
         apiClient.post(`/follow/addFollower`,
             {followeeUniqueId,followerUniqueId},
             {headers: { Authorization: `Bearer ${jwtToken}` }}
         )
         .then((res)=>{
-            setFollowedUsers((prevFollowedUsers)=>[...prevFollowedUsers,followUserUniqueId])
+            setFollowedUsers((prevFollowedUsers)=>[...prevFollowedUsers,followeeUniqueId])
+
+            queryClient.setQueryData(['following', userUniqueId], (oldData) => {
+                return [...(oldData || []), followUser];
+            });
+
             console.log(res);
         })
         .catch((err)=>{
@@ -90,7 +98,7 @@ const ReccomendationTab = ({userUniqueId})=>{
                                         </Box>
                                     </Box>
 
-                                    <Button size="small" variant="contained" color="primary" onClick={() => {handleFollow(recommendation.uniqueId)}}
+                                    <Button size="small" variant="contained" color="primary" onClick={() => {handleFollow(recommendation)}}
                                         disabled={followedUsers.includes(recommendation.uniqueId)}>
                                         {followedUsers.includes(recommendation.uniqueId)?'Following':'Follow'}
                                     </Button>

@@ -9,6 +9,8 @@ import { useTheme } from '@mui/material/styles';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import apiClient from "./lib/apiClient";
+import { Query } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +27,7 @@ export default function RootLayout({ children }) {
   const [emailVerified,setEmailVerified] = useState(false);
   const [email,setEmail] = useState('');
   const router = useRouter();
+  const queryClient = new QueryClient();
 
   useEffect(() => {
     const jwtToken = localStorage.getItem('jwtToken');
@@ -158,9 +161,11 @@ export default function RootLayout({ children }) {
       </Toolbar>
     </AppBar>
 
+        <QueryClientProvider client={queryClient}>
         <AuthContext.Provider value={{authenticated,setAuthenticated,oAuthUser,setOAuthUser,uniqueId,setUniqueId,username,setUsername,emailVerified,setEmailVerified,email,setEmail}}>
           {children}
         </AuthContext.Provider>
+        </QueryClientProvider>
         
       </body>
     </html>

@@ -1,82 +1,72 @@
-'use Client'
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Avatar, Box, Button, Card, CardContent, Grid, Typography } from '@mui/material';
+import Link from 'next/link';
+import apiClient from '@/app/lib/apiClient';
+import PropTypes from 'prop-types';
+import { useCallback } from 'react';
 
-import apiClient from "@/app/lib/apiClient";
-import { Avatar, Box, Button, Card, CardContent, Grid, Typography } from "@mui/material";
-import axios from "axios";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+const FollowersTab = ({ userUniqueId, loggedInUserUniqueId }) => {
+    const queryClient = useQueryClient(); 
 
+    const { data: followers = [], isLoading, error } = useQuery({
+        queryKey: ['followers', userUniqueId],
+        queryFn: async () => {
+            const jwtToken = localStorage.getItem('jwtToken');
+            const response = await apiClient.get(`/follow/getfollowers?userUniqueId=${userUniqueId}`, {
+                headers: { Authorization: `Bearer ${jwtToken}` },
+            });
+            return response.data;
+        },
+        enabled: !!userUniqueId,
+        staleTime: 5 * 60 * 1000,
+    });
 
+    const handleFollow = useCallback(async (followUser) => {
+        const followUserUniqueId = followUser.uniqueId;
+        const jwtToken = localStorage.getItem('jwtToken');
+        try {
+            await apiClient.post(
+                `/follow/addFollower`,
+                { followeeUniqueId: followUserUniqueId, followerUniqueId: loggedInUserUniqueId },
+                { headers: { Authorization: `Bearer ${jwtToken}` } }
+            );
 
-const FollowersTab = ({userUniqueId,loggedInUserUniqueId})=>{
+            queryClient.setQueryData(['followers', userUniqueId], (oldData) =>
+                oldData.map((follower) =>
+                    follower.uniqueId === followUserUniqueId
+                        ? { ...follower, followedByLoggedInUser: true }
+                        : follower
+                )
+            );
 
-    const [followers,setFollowers] = useState([]);
-    const [removedUser,setRemovedUsers] = useState([]);
-
-    useEffect(()=>{
-
-        if(!userUniqueId){
-            return;
+            queryClient.setQueryData(['following', loggedInUserUniqueId], (oldData) => {
+                return [...(oldData || []), followUser];
+            });
+        } catch (err) {
+            console.error(err);
         }
+    }, [loggedInUserUniqueId, queryClient, userUniqueId]);
+        
 
+    const handleRemoveFollow = useCallback(async (followUserUniqueId) => {
         const jwtToken = localStorage.getItem('jwtToken');
-        apiClient.get(`/follow/getfollowers?userUniqueId=${userUniqueId}`,
-            {
-                headers: { Authorization: `Bearer ${jwtToken}` }
-            }
-        )
-        .then((res)=>{
-            setFollowers(res.data);
-            console.log(res.data);
-        })
-        .catch((err)=>{
-            console.log(err);
-        });
+        try {
+            await apiClient.get(`/follow/removeFollower?userUniqueId=${followUserUniqueId}`, {
+                headers: { Authorization: `Bearer ${jwtToken}` },
+            });
 
-    },[userUniqueId]);
+            queryClient.setQueryData(['followers', userUniqueId], (oldData) =>
+                oldData.filter((follower) => follower.uniqueId !== followUserUniqueId)
+            );
+        } catch (err) {
+            console.error(err);
+        }
+    }, [queryClient, userUniqueId]);
 
-    const handleFollow = (followUserUniqueId)=>{
-        const followerUniqueId = loggedInUserUniqueId;
-        const followeeUniqueId = followUserUniqueId;
-        const jwtToken = localStorage.getItem('jwtToken');
+    if (isLoading) return <Typography>Loading followers...</Typography>;
+    if (error) return <Typography color="error">Failed to load followers. Please try again later.</Typography>;
 
-        apiClient.post(`/follow/addFollower`,
-            {followeeUniqueId,followerUniqueId},
-            {headers: { Authorization: `Bearer ${jwtToken}` }}
-        )
-        .then((res)=>{
-             const updatedFollowers = followers.map(follower =>{
-                if(follower.uniqueId == followUserUniqueId){
-                    return {...follower,followedByLoggedInUser: true}
-                }
-                return follower
-             })
-
-             setFollowers(updatedFollowers)
-            console.log(res);
-        })
-        .catch((err)=>{
-            console.log(err);
-        });
-    }
-
-    const handleRemoveFollow = (followUserUniqueId)=>{
-
-        const jwtToken = localStorage.getItem('jwtToken');
-
-        apiClient.get(`/follow/removeFollower?userUniqueId=${followUserUniqueId}`,
-            {headers: { Authorization: `Bearer ${jwtToken}` }}
-        )
-        .then((res)=>{
-            setRemovedUsers((prevRemoved)=>[...prevRemoved,followUserUniqueId])
-            console.log(res);
-        })
-        .catch((err)=>{
-            console.log(err);
-        });
-    }
-
-    return(
+    return (
         <>
             <Typography variant="h6" gutterBottom>
                 Followers
@@ -85,64 +75,71 @@ const FollowersTab = ({userUniqueId,loggedInUserUniqueId})=>{
             {followers.length > 0 ? (
                 <Grid container spacing={3}>
                     {followers.map((user) => (
-
-
-                    <Grid item xs={12} sm={6} md={6} key={user.uniqueId}>
-                        <Card>
-                            <CardContent>
-                                <Box display="flex" alignItems="center" justifyContent="space-between">
-                                    <Box display="flex" alignItems="center">
-                                        <Avatar
-                                            alt={user.username}
-                                            src={user.profileImageUrl} // Assuming user has profile image URL
-                                            sx={{ width: 56, height: 56, marginRight: 1 }}
-                                            
-                                        />
-                                  
-                                        <Box component={Link} sx={{ color: '#333333', cursor: 'pointer', textDecoration: 'none'}} href={`/profile/${user.uniqueId}`}>
-                                            <Typography 
-                                                variant="body1" 
-                                                sx={{ 
-                                                    fontWeight: 'bold', 
-                                                    '&:hover': {
-                                                        textDecoration: 'underline'
-                                                    }
-                                                }}
+                        <Grid item xs={12} sm={6} md={6} key={user.uniqueId}>
+                            <Card>
+                                <CardContent>
+                                    <Box display="flex" alignItems="center" justifyContent="space-between">
+                                        <Box display="flex" alignItems="center">
+                                            <Avatar
+                                                alt={user.username}
+                                                src={user.profileImageUrl}
+                                                sx={{ width: 56, height: 56, marginRight: 1 }}
+                                            />
+                                            <Box
+                                                component={Link}
+                                                sx={{ color: '#333333', cursor: 'pointer', textDecoration: 'none' }}
+                                                href={`/profile/${user.uniqueId}`}
                                             >
-                                                {user.username?user.username:user.name}
-                                            </Typography>
+                                                <Typography
+                                                    variant="body1"
+                                                    sx={{
+                                                        fontWeight: 'bold',
+                                                        '&:hover': {
+                                                            textDecoration: 'underline',
+                                                        },
+                                                    }}
+                                                >
+                                                    {user.username || user.name}
+                                                </Typography>
+                                            </Box>
                                         </Box>
-                                    </Box>
 
-                                    {userUniqueId==loggedInUserUniqueId &&
-                                        <Button size="small" variant="contained" color="primary" onClick={() => {handleRemoveFollow(user.uniqueId)}}
-                                            disabled={removedUser.includes(user.uniqueId)}
+                                        {userUniqueId === loggedInUserUniqueId ? (
+                                            <Button
+                                                size="small"
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={() => handleRemoveFollow(user.uniqueId)}
                                             >
-                                            {removedUser.includes(user.uniqueId) ? 'Removed': 'Remove'}
-                                        </Button>
-                                    }
-                                    {userUniqueId!=loggedInUserUniqueId &&
-                                        <Button size="small" variant="contained" color="primary" onClick={() => {handleFollow(user.uniqueId)}}
-                                        disabled={user.followedByLoggedInUser}
-                                        
-                                        >
-                                        {user.followedByLoggedInUser ? 'Following': 'Follow'}
-                                        </Button>
-                                    }
-
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-
+                                                Remove
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                size="small"
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={() => handleFollow(user)}
+                                                disabled={user.followedByLoggedInUser}
+                                            >
+                                                {user.followedByLoggedInUser ? 'Following' : 'Follow'}
+                                            </Button>
+                                        )}
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        </Grid>
                     ))}
                 </Grid>
             ) : (
-                <Typography>You are not followed anyone</Typography>
+                <Typography>No followers found</Typography>
             )}
         </>
-    )
+    );
+};
 
-}
+FollowersTab.propTypes = {
+    userUniqueId: PropTypes.string.isRequired,
+    loggedInUserUniqueId: PropTypes.string.isRequired,
+};
 
 export default FollowersTab;
