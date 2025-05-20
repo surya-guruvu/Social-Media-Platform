@@ -11,6 +11,7 @@ import com.smplatform.backend.exception.DuplicateEmailException;
 import com.smplatform.backend.exception.DuplicateUsernameException;
 import com.smplatform.backend.exception.EmailNotPresentException;
 import com.smplatform.backend.exception.EmailNotSentException;
+import com.smplatform.backend.exception.PostNotFoundException;
 import com.smplatform.backend.exception.UserNotPresentException;
 
 import io.jsonwebtoken.MalformedJwtException;
@@ -69,7 +70,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ActivityNotFoundException.class)
     public ResponseEntity<String> handleActivityNotFoundException(ActivityNotFoundException ex) {
-        logger.error("User not present: {}", ex.getMessage());
+        logger.error("Activity not present: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(PostNotFoundException.class)
+    public ResponseEntity<String> handlePostyNotFoundException(ActivityNotFoundException ex) {
+        logger.error("Post not present: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 

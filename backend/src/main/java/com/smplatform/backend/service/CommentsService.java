@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.smplatform.backend.model.Comment;
+import com.smplatform.backend.model.Post;
 import com.smplatform.backend.repository.CommentsRepository;
 
 
@@ -20,14 +21,14 @@ public class CommentsService {
         return commentsRepository.findById(Id);
     }
 
-    public List<Comment> findByParentId(Long Id){
-        return commentsRepository.findAllByParentId(Id);
+    public List<Comment> findByPostAndParentCommentIsNullOrderByTimeStampAsc(Post post){
+        return commentsRepository.findByPostAndParentCommentIsNullOrderByTimeStampAsc(post);
     }
 
-    public List<Comment> findByUserId(Long Id){
-        return commentsRepository.findAllByUserId(Id);
+    public List<Comment> findByParentCommentOrderByTimeStampAsc(Comment parentComment){
+        return commentsRepository.findByParentCommentOrderByTimeStampAsc(parentComment);
     }
-
+    
     public void save(Comment comment){
         commentsRepository.save(comment);
     }

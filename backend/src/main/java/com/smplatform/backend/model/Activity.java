@@ -1,5 +1,6 @@
 package com.smplatform.backend.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,4 +18,7 @@ public class Activity {
     private Long Id;
 
     private int likes = 0;
+
+    @Column(nullable = false)
+    private int comments = 0;
 }
