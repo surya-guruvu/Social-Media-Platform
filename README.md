@@ -1,1 +1,1 @@
-# SMPlatform
+# Social Media Platform
